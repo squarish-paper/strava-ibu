@@ -1,6 +1,22 @@
-<?php
-    echo "STRAVA DATA VIEWER";
+<html>
+<body>
+<link rel="stylesheet" href="css/styles.css" type="text/css">
+<h1>Strava Data Explorer</h1>
 
+<script type="text/javascript">
+
+    function getEpoch(type){
+      var d = new Date(); 
+      document.getElementById("epochTime").innerText = type + ' ' + String(d.getTime()-d.getMilliseconds()/1000)
+}
+
+</script>
+<a href="#" onclick="getEpoch('Week'); return false;">Week</a>
+<a href="#" onclick="getEpoch('Month'); return false;">Month</a>
+<a href="#" onclick="getEpoch('Year'); return false;">Year</a>
+<div id="epochTime"></div>
+
+<?php
     // includes
     include('config.php');
 
@@ -42,3 +58,5 @@
     echo "TOTAL CLIMB   : " . $totalClimb . "metres<br />";
         
 ?>
+</body>
+</html>
