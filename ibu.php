@@ -1,16 +1,15 @@
 <html>
+<head>
+    <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.js" type="text/javascript"></script>
+    <script src="js/main.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="css/styles.css" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.css" type="text/css">
+</head>
 <body>
-<link rel="stylesheet" href="css/styles.css" type="text/css">
+
 <h1>Strava Data Explorer</h1>
 
-<script type="text/javascript">
-
-    function getEpoch(type){
-      var d = new Date(); 
-      document.getElementById("epochTime").innerText = type + ' ' + String(d.getTime()-d.getMilliseconds()/1000)
-}
-
-</script>
 <a href="#" onclick="getEpoch('Week'); return false;">Week</a>
 <a href="#" onclick="getEpoch('Month'); return false;">Month</a>
 <a href="#" onclick="getEpoch('Year'); return false;">Year</a>
@@ -38,8 +37,8 @@
     $maxSpeed = 0;
     foreach($activities as $activity) {
         $activityCount += 1;
-        //echo "<br />" ;
-        //echo $activity["name"] . " - " . $activity["distance"] / 1603.34 . "|" . $activity["moving_time"] / 3600 . "|" . $activity["total_elevation_gain"] . "|" . $activity["average_speed"]/ 0.44704  . "|" . $activity["max_speed"];
+        echo "<br />" ;
+        echo $activity["distance"] / 1603.34 . "|" . $activity["moving_time"] / 3600 . "|" . $activity["total_elevation_gain"] . "|" . $activity["average_speed"]/ 0.44704  . "|" . $activity["max_speed"];
         $totalDistance += $activity["distance"];
         $totalTime += $activity["moving_time"];
         $totalClimb += $activity["total_elevation_gain"];
