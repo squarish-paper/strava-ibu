@@ -1,5 +1,83 @@
 <html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
 <body>
-Hello World
+<div id="wrapper">
+  <div id="user"></div>
+
+
+  <div id="recentStuff"></div>
+  <div id="activities">
+  </div>
+  <div>-- FIN --</div>
+</div>
+
+
 </body>
+
+
+
+<script>
+
+    $("#wrapper").each(function() {
+      callStrava();
+    });
+    function callStrava() {
+        var url = "https://www.strava.com/api/v3/athletes/15535211";
+        apiCall(url, drawAthlete);
+
+    };
+
+    function apiCall(url, handler) {
+      $.ajax({
+          method: "GET",
+          headers: {
+            'Authorization': 'Bearer 28fb470866dbe165f358b66aa1f5198b9059cd0b'
+          },
+          url: url,
+          success: function(data) {
+              handler(data);
+          }
+      });
+    };
+    function drawAthlete(athlete) {
+      document.getElementById("user").innerHTML = athlete.username;
+      var url = "https://www.strava.com/api/v3/athlete/activities";
+      apiCall(url, drawActivities);
+
+    };
+
+    function drawActivities(activities) {
+
+      var activityCount = activities.length;
+      document.getElementById("recentStuff").innerHTML = "Fetched the most recent " +activities.length+ " activities";
+      for (var i = 0; i < activities.length; i++) {
+        var url = "https://www.strava.com/api/v3/activities/" + activities[i].id;
+        apiCall(url, drawActivity);
+      }
+
+    };
+
+    function drawActivity(activity) {
+      var segMap = new Map();
+      for (var j = 0; j < activity.segment_efforts.length; j++) {
+        var segment = activity.segment_efforts[j];
+        var div = document.createElement("div");
+        var line = segment.name;
+          console.log(activity.segment_efforts.length + "|" + j + "|" + line);
+        div.innerHTML = line;
+        document.getElementById("activities").appendChild(div);
+      }
+    };
+
+    function drawSegment(segment) {
+
+    };
+
+
+</script>
+
 </html>
