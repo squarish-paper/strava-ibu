@@ -13,6 +13,9 @@
   <div id="activities">
   </div>
   <div>-- FIN --</div>
+
+  <div id="debug">
+  </div>
 </div>
 
 
@@ -22,10 +25,16 @@
 
 <script>
 
+    var allSegments = [];
+
     $("#wrapper").each(function() {
       callStrava();
+
+      console.log("DONE?");
+
     });
     function callStrava() {
+        var segMap = [];
         var url = "https://www.strava.com/api/v3/athletes/15535211";
         apiCall(url, drawAthlete);
 
@@ -62,19 +71,38 @@
     };
 
     function drawActivity(activity) {
-      var segMap = new Map();
       for (var j = 0; j < activity.segment_efforts.length; j++) {
         var segment = activity.segment_efforts[j];
-        var div = document.createElement("div");
-        var line = segment.name;
-          console.log(activity.segment_efforts.length + "|" + j + "|" + line);
-        div.innerHTML = line;
-        document.getElementById("activities").appendChild(div);
+
+        if (allSegments.indexOf(segment.name) > 0) {
+          updateSegment(segment);
+        } else {
+          allSegments.push(segment.name);
+          buildSegment(segment);
+        }
       }
     };
 
-    function drawSegment(segment) {
+    function buildSegment(segment) {
+      var divName = document.createElement('div');
+      divName.innerText =  segment.name;
+      divName.id = "segName"+segment.id;
 
+      var divCount = document.createElement('div');
+      divCount.innerText =  "1";
+      divCount.id = "segCount"+segment.id;
+
+      var row  = document.createElement('div');
+      row.appendChild(divName);
+      row.appendChild(divCount);
+      document.getElementById("activities").appendChild(row);
+    };
+
+    function updateSegment(segment) {
+      console.log(document.getElementById("segCount"+segment.id));
+      //var oldCount = document.getElementById("segCount"+segment.id).innerText;
+      //console.log(segment.name + " - " + oldCount);
+      //document.getElementById("segCount"+segment.id).innerHTML(oldCount+1);
     };
 
 
