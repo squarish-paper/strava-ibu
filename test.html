@@ -119,14 +119,22 @@
       }
     };
 
+    function drawSegment(leaderboard) {
+      console.log(leaderboard.entries[1]);
+      for (var k = 0; k < leaderboard.length; k++)  {
+
+
+      }
+    };
+
     function buildSegment(segmentEffort) {
+
       var row = document.createElement('tr');
       row.id  = "segment"+segmentEffort.segment.id;
 
-
       var td= document.createElement('td');
       var a = document.createElement('a');
-      a.href = "http://www.strava.com/segments/"+segmentEffort.segment.id
+      a.href = "https://www.strava.com/segments/"+segmentEffort.segment.id;
       a.text = segmentEffort.segment.name;
       td.appendChild(a);
       row.appendChild(td);
@@ -135,6 +143,9 @@
       row.appendChild(newTd(segmentEffort.elapsed_time, "segTime"+segmentEffort.segment.id));
       row.appendChild(newTd(segmentEffort.segment.distance, null));
       document.getElementById("tableRows").appendChild(row);
+
+      var url = "https://www.strava.com/api/v3/segments/" +segmentEffort.segment.id + "/leaderboard";
+      apiCall(url, drawSegment);
 
     };
 
