@@ -1,8 +1,12 @@
+<!DOCTYPE html>
 <html>
 
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+<!-- JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!--<script type="text/javascript" src="js/jquery-latest.js"></script>-->
+<script type="text/javascript" src="js/jquery.tablesorter.js"></script>
 
       <!-- CSS  -->
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -12,13 +16,17 @@
 
 <body>
 <div id="wrapper">
+
+
+  <button id="btnFetch" onclick="fetchStuff()">FETCH</button>
   <div id="user"></div>
 
 
   <div id="recentStuff"></div>
 
   <div id="activities">
-    <table class="striped">
+    <!--<table  id="tableSegments" class="striped tablesorter">-->
+    <table id="tableSegments" class="tablesorter">
       <thead id="tableHead">
         <tr>
           <th>Segment Name</th>
@@ -26,10 +34,13 @@
           </tr>
         </thead>
         <tbody id="tableRows">
+          <tr>
+            <td>DUMMY</td>
+            <td>1</td>
+          </tr>
         </tbody>
       </table>
   </div>
-  <div>-- FIN --</div>
 
   <div id="debug">
   </div>
@@ -43,13 +54,17 @@
 <script>
 
     var allSegments = [];
+    $(document).ready(function()
+        {
+            $("#tableSegments").tablesorter();
+        }
+    );
 
-    $("#wrapper").each(function() {
+    function fetchStuff() {
+      console.log("fetching activities");
       callStrava();
+    };
 
-      console.log("DONE?");
-
-    });
     function callStrava() {
         var segMap = [];
         var url = "https://www.strava.com/api/v3/athletes/15535211";
@@ -97,6 +112,8 @@
           allSegments.push(segmentEffort.name);
           buildSegment(segment);
         }
+        $("#tableSegments").trigger("update");
+
       }
     };
 
@@ -116,6 +133,7 @@
       row.appendChild(rowName);
       row.appendChild(rowCount);
       document.getElementById("tableRows").appendChild(row);
+
     };
 
     function updateSegment(segment) {
