@@ -31,12 +31,16 @@
         <tr>
           <th>Segment Name</th>
             <th>Activity Count</th>
+            <th>Time</th>
+            <th>Distance</th>
           </tr>
         </thead>
         <tbody id="tableRows">
           <tr>
             <td>DUMMY</td>
             <td>1</td>
+            <td>4</td>
+            <td>4</td>
           </tr>
         </tbody>
       </table>
@@ -61,7 +65,6 @@
     );
 
     function fetchStuff() {
-      console.log("fetching activities");
       callStrava();
     };
 
@@ -105,42 +108,58 @@
     function drawActivity(activity) {
       for (var j = 0; j < activity.segment_efforts.length; j++) {
         var segmentEffort = activity.segment_efforts[j];
-        var segment =segmentEffort.segment;
-        if (allSegments.indexOf(segmentEffort.name) > 0) {
-          updateSegment(segment);
+        if (allSegments.indexOf(segmentEffort.segment.id) > 0) {
+          updateSegment(segmentEffort);
         } else {
-          allSegments.push(segmentEffort.name);
-          buildSegment(segment);
+          allSegments.push(segmentEffort.segment.id);
+          buildSegment(segmentEffort);
         }
         $("#tableSegments").trigger("update");
 
       }
     };
 
-    function buildSegment(segment) {
+    function buildSegment(segmentEffort) {
       var row = document.createElement('tr');
-      row.id  = "segment"+segment.id;
+      row.id  = "segment"+segmentEffort.segment.id;
 
-      var rowName = document.createElement('td');
-      rowName.innerText =  segment.name;
-      rowName.id = "segName"+segment.id;
 
-      var rowCount = document.createElement('td');
-      rowCount.innerText =  "1";
-      rowCount.id = "segCount"+segment.id;
+      var td= document.createElement('td');
+      var a = document.createElement('a');
+      a.href = "http://www.strava.com/segments/"+segmentEffort.segment.id
+      a.text = segmentEffort.segment.name;
+      td.appendChild(a);
+      row.appendChild(td);
 
-      var row = document.createElement('tr');
-      row.appendChild(rowName);
-      row.appendChild(rowCount);
+      row.appendChild(newTd("1","segCount"+segmentEffort.segment.id));
+      row.appendChild(newTd(segmentEffort.elapsed_time, "segTime"+segmentEffort.segment.id));
+      row.appendChild(newTd(segmentEffort.segment.distance, null));
       document.getElementById("tableRows").appendChild(row);
 
     };
 
-    function updateSegment(segment) {
-      var oldCount = document.getElementById("segCount"+segment.id).innerText;
-      document.getElementById("segCount"+segment.id).innerText = parseInt(oldCount)+1;
+    function updateSegment(segmentEffort) {
+      var oldCount = document.getElementById("segCount"+segmentEffort.segment.id).innerText;
+      document.getElementById("segCount"+segmentEffort.segment.id).innerText = parseInt(oldCount)+1;
+
+      var oldTime = document.getElementById("segTime"+segmentEffort.segment.id).innerText;
+
+      if (oldTime > segmentEffort.elapsed_time) {
+    //    console.log("BETTER TIME!" + segmentEffort.segment.name + " " + oldTime + " " + segmentEffort.elapsed_time);
+        document.getElementById("segTime"+segmentEffort.segment.id).innerText = parseInt(segmentEffort.elapsed_time);
+      }
+
+
     };
 
+    function newTd(data,id) {
+      var td = document.createElement('td');
+      td.innerText =  data;
+      if (id != null) {
+        td.id = id;
+      }
+      return td;
+    }
 
 </script>
 
