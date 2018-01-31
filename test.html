@@ -64,6 +64,7 @@
 <script>
 
     var allSegments = [];
+    var athleteName = "";
     $(document).ready(function()
         {
             $("#tableSegments").tablesorter();
@@ -108,6 +109,8 @@
 
     function drawAthlete(athlete) {
       document.getElementById("user").innerHTML = athlete.username;
+      athleteName = athlete.firstname + " " + athlete.lastname.substring(0,1) + ".";
+      console.log(athleteName);
       var url = "https://www.strava.com/api/v3/athlete/activities";
       apiCall(url, drawActivities);
 
@@ -145,7 +148,15 @@
        var position = 0;
        if (leaderboardCount > 10) {
         position = leaderboard.entries[leaderboardCount-3].rank;
-       }
+      } else {
+        for (var l = 1; l < leaderboardCount; l++) {
+          if (leaderboard.entries[l].athlete_name == athleteName) {
+            position = leaderboard.entries[l].rank;
+            l = leaderboard;
+          }
+
+        }
+      };
 
       //  for (var k = 0; k < leaderboardCount; k++)  {
       //    document.getElementById("segCR"+segmentEffort.segment.id).innerText = parseInt(oldCount)+1;
