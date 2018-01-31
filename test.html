@@ -29,13 +29,13 @@
     <table id="tableSegments" class="tablesorter">
       <thead id="tableHead">
         <tr>
-          <th>Segment Name</th>
-            <th>Activity Count</th>
-            <th>Time</th>
+            <th>Segment Name</th>
             <th>Distance</th>
-            <th>CR</th>
+            <th>Activity Count</th>
             <th>Rank</th>
-            <th>Diff</th>
+            <th>Time</th>
+            <th>CR</th>
+            <th>Top 10</th>
           </tr>
         </thead>
         <tbody id="tableRows">
@@ -164,9 +164,12 @@
       //
       // }
 
-      document.getElementById("segCR"+segmentEffort.segment.id).innerText = leaderboard.entries[1].elapsed_time;
+      var timeOffTop = segmentEffort.elapsed_time - leaderboard.entries[1].elapsed_time;
+      var timeOfftenth = segmentEffort.elapsed_time - leaderboard.entries[9].elapsed_time;
+      document.getElementById("segTime"+segmentEffort.segment.id).innerText = segmentEffort.elapsed_time + "(+" + timeOffTop + ")";
       document.getElementById("segRank"+segmentEffort.segment.id).innerText = position + "/" + leaderboard.entry_count;
-      document.getElementById("segDiff"+segmentEffort.segment.id).innerText = segmentEffort.elapsed_time - leaderboard.entries[1].elapsed_time;
+      document.getElementById("segCR"+segmentEffort.segment.id).innerText = leaderboard.entries[1].elapsed_time;
+      document.getElementById("segTop"+segmentEffort.segment.id).innerText = leaderboard.entries[9].elapsed_time + "(+" + timeOfftenth + ")";
 
       $("#tableSegments").trigger("update");
 
@@ -186,12 +189,12 @@ var segmentId = "";
       td.appendChild(a);
       row.appendChild(td);
 
-      row.appendChild(newTd("1","segCount"+segmentEffort.segment.id));
-      row.appendChild(newTd(segmentEffort.elapsed_time, "segTime"+segmentEffort.segment.id));
       row.appendChild(newTd(segmentEffort.segment.distance, null));
-      row.appendChild(newTd("", "segCR"+segmentEffort.segment.id));
+      row.appendChild(newTd("1","segCount"+segmentEffort.segment.id));
       row.appendChild(newTd("", "segRank"+segmentEffort.segment.id));
-      row.appendChild(newTd("", "segDiff"+segmentEffort.segment.id));
+      row.appendChild(newTd("", "segTime"+segmentEffort.segment.id));
+      row.appendChild(newTd("", "segCR"+segmentEffort.segment.id));
+      row.appendChild(newTd("", "segTop"+segmentEffort.segment.id));
       document.getElementById("tableRows").appendChild(row);
 
       var url = "https://www.strava.com/api/v3/segments/" +segmentEffort.segment.id + "/leaderboard";
