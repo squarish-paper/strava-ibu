@@ -25,8 +25,8 @@
   <div id="recentStuff"></div>
 
   <div id="activities">
-    <!--<table  id="tableSegments" class="striped tablesorter">-->
-    <table id="tableSegments" class="tablesorter">
+
+    <table id="tableSegments" class="striped tablesorter">
       <thead id="tableHead">
         <tr>
             <th>Segment Name</th>
@@ -35,7 +35,9 @@
             <th>Rank</th>
             <th>Time</th>
             <th>CR</th>
+            <th>+-</th>
             <th>Top 10</th>
+            <th>+-</th>
           </tr>
         </thead>
         <tbody id="tableRows">
@@ -45,6 +47,8 @@
             <td>4</td>
             <td>4</td>
             <td>6</td>
+            <td>0</td>
+            <td>0</td>
             <td>0</td>
             <td>0</td>
           </tr>
@@ -78,7 +82,11 @@
     function callStrava() {
         var segMap = [];
         var url = "https://www.strava.com/api/v3/athletes/15535211";
-        apiCall(url, drawAthlete);
+        if (localStorage.athlete == null) {
+          apiCall(url, drawAthlete);
+        } else {
+          drawAthlete(JSON.parse(localStorage.athlete));
+        }
 
     };
 
@@ -95,6 +103,7 @@
       });
     };
     function apiCall(url, handler, params) {
+      console.log("CALLING API! " + url)
       $.ajax({
           method: "GET",
           headers: {
@@ -108,27 +117,49 @@
     };
 
     function drawAthlete(athlete) {
+      //locally store athlete
+      if (localStorage.athlete == null) {
+        localStorage.athlete = JSON.stringify(athlete);
+      }
+
       document.getElementById("user").innerHTML = athlete.username;
       athleteName = athlete.firstname + " " + athlete.lastname.substring(0,1) + ".";
       console.log(athleteName);
-      var url = "https://www.strava.com/api/v3/athlete/activities";
-      apiCall(url, drawActivities);
 
+      if (localStorage.activities == null) {
+        var url = "https://www.strava.com/api/v3/athlete/activities";
+        apiCall(url, drawActivities);
+      } else {
+        drawActivities(JSON.parse(localStorage.activities));
+      }
     };
 
     function drawActivities(activities) {
+      //locally store activities
+      if (localStorage.activities == null) {
+        localStorage.activities = JSON.stringify(activities);
+      }
 
       var activityCount = activities.length;
       document.getElementById("recentStuff").innerHTML = "Fetched the most recent " +activities.length+ " activities";
-      //for (var i = 0; i < activities.length; i++) {
-      for (var i = 0; i < 3; i++) {
-        var url = "https://www.strava.com/api/v3/activities/" + activities[i].id;
-        apiCall(url, drawActivity);
+      for (var i = 0; i < activities.length; i++) {
+    //  for (var i = 0; i < 3; i++) {
+
+        if (localStorage.getItem("activity"+activities[i].id) == null) {
+          var url = "https://www.strava.com/api/v3/activities/" + activities[i].id;
+           apiCall(url, drawActivity);
+        } else {
+          drawActivity(JSON.parse(localStorage.getItem("activity"+activities[i].id)));
+        }
       }
 
     };
 
     function drawActivity(activity) {
+      if (localStorage.getItem("activity"+activity.id) == null) {
+        localStorage.setItem("activity"+activity.id, JSON.stringify(activity));
+      }
+//console.log(activity);
       for (var j = 0; j < activity.segment_efforts.length; j++) {
         var segmentEffort = activity.segment_efforts[j];
         if (allSegments.indexOf(segmentEffort.segment.id) > 0) {
@@ -144,6 +175,10 @@
 
     function drawSegment(leaderboard, segmentEffort) {
 
+//      if (localStorage.getItem("segment"+segmentEffort.segment.id) == null) {
+  //      localStorage.setItem("segment"+segmentEffort.segment.id, JSON.stringify(leaderboard));
+    //  }
+
        var leaderboardCount = leaderboard.entries.length;
        var position = 0;
        if (leaderboardCount > 10) {
@@ -158,25 +193,19 @@
         }
       };
 
-      //  for (var k = 0; k < leaderboardCount; k++)  {
-      //    document.getElementById("segCR"+segmentEffort.segment.id).innerText = parseInt(oldCount)+1;
-      //
-      //
-      // }
-
       var timeOffTop = segmentEffort.elapsed_time - leaderboard.entries[1].elapsed_time;
       var timeOfftenth = segmentEffort.elapsed_time - leaderboard.entries[9].elapsed_time;
-      document.getElementById("segTime"+segmentEffort.segment.id).innerText = segmentEffort.elapsed_time + "(+" + timeOffTop + ")";
+      document.getElementById("segTime"+segmentEffort.segment.id).innerText = segmentEffort.elapsed_time;
       document.getElementById("segRank"+segmentEffort.segment.id).innerText = position + "/" + leaderboard.entry_count;
       document.getElementById("segCR"+segmentEffort.segment.id).innerText = leaderboard.entries[1].elapsed_time;
-      document.getElementById("segTop"+segmentEffort.segment.id).innerText = leaderboard.entries[9].elapsed_time + "(+" + timeOfftenth + ")";
+      document.getElementById("segCRDiff"+segmentEffort.segment.id).innerText = "+" + timeOffTop;
+      document.getElementById("segTop"+segmentEffort.segment.id).innerText = leaderboard.entries[9].elapsed_time;
+      document.getElementById("segTopDiff"+segmentEffort.segment.id).innerText = "+" + timeOfftenth;
 
       $("#tableSegments").trigger("update");
 
-    }
+    };
 
-
-var segmentId = "";
     function buildSegment(segmentEffort) {
 
       var row = document.createElement('tr');
@@ -194,11 +223,21 @@ var segmentId = "";
       row.appendChild(newTd("", "segRank"+segmentEffort.segment.id));
       row.appendChild(newTd("", "segTime"+segmentEffort.segment.id));
       row.appendChild(newTd("", "segCR"+segmentEffort.segment.id));
+      row.appendChild(newTd("", "segCRDiff"+segmentEffort.segment.id));
       row.appendChild(newTd("", "segTop"+segmentEffort.segment.id));
+      row.appendChild(newTd("", "segTopDiff"+segmentEffort.segment.id));
       document.getElementById("tableRows").appendChild(row);
 
-      var url = "https://www.strava.com/api/v3/segments/" +segmentEffort.segment.id + "/leaderboard";
-      apiCall(url, drawSegment, segmentEffort);
+
+
+
+
+    //  if (localStorage.getItem("segment"+segmentEffort.segment.id) == null) {
+        var url = "https://www.strava.com/api/v3/segments/" +segmentEffort.segment.id + "/leaderboard";
+    //    apiCall(url, drawSegment, segmentEffort);
+    //  } else {
+    //    drawActivity(JSON.parse(localStorage.getItem("segment"+segmentEffort.segment.id)));
+  //    }
 
     };
 
@@ -209,11 +248,8 @@ var segmentId = "";
       var oldTime = document.getElementById("segTime"+segmentEffort.segment.id).innerText;
 
       if (oldTime > segmentEffort.elapsed_time) {
-    //    console.log("BETTER TIME!" + segmentEffort.segment.name + " " + oldTime + " " + segmentEffort.elapsed_time);
         document.getElementById("segTime"+segmentEffort.segment.id).innerText = parseInt(segmentEffort.elapsed_time);
       }
-
-
     };
 
     function newTd(data,id) {
