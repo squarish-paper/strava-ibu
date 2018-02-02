@@ -175,9 +175,9 @@
 
     function drawSegment(leaderboard, segmentEffort) {
 
-//      if (localStorage.getItem("segment"+segmentEffort.segment.id) == null) {
-  //      localStorage.setItem("segment"+segmentEffort.segment.id, JSON.stringify(leaderboard));
-    //  }
+      if (localStorage.getItem("leaderboard"+segmentEffort.segment.id) == null) {
+        localStorage.setItem("leaderboard"+segmentEffort.segment.id, JSON.stringify(leaderboard));
+      }
 
        var leaderboardCount = leaderboard.entries.length;
        var position = 0;
@@ -232,12 +232,12 @@
 
 
 
-    //  if (localStorage.getItem("segment"+segmentEffort.segment.id) == null) {
+      if (localStorage.getItem("leaderboard"+segmentEffort.segment.id) == null) {
         var url = "https://www.strava.com/api/v3/segments/" +segmentEffort.segment.id + "/leaderboard";
-    //    apiCall(url, drawSegment, segmentEffort);
-    //  } else {
-    //    drawActivity(JSON.parse(localStorage.getItem("segment"+segmentEffort.segment.id)));
-  //    }
+        apiCall(url, drawSegment, segmentEffort);
+      } else {
+        drawActivity(JSON.parse(localStorage.getItem("leaderboard"+segmentEffort.segment.id)));
+      }
 
     };
 
