@@ -7,7 +7,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!--<script type="text/javascript" src="js/jquery-latest.js"></script>-->
 <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
-<script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript" src="js/api.js"></script>
 
       <!-- CSS  -->
@@ -20,7 +19,7 @@
 <div id="wrapper">
 
 
-  <button id="btnFetch" onclick="callStrava()">FETCH</button>
+  <button id="btnFetch" onclick="fetchStuff()">FETCH</button>
   <div id="user"></div>
 
 
@@ -69,16 +68,17 @@
 
 <script>
 
-    var allSegments = [];
-    var athleteName = "";
-    $(document).ready(function() {
+    $(document).ready(function()
+        {
             $("#tableSegments").tablesorter();
-            var athlete = JSON.parse(localStorage.athlete);
-            console.log(athlete.firstname);
-            console.log(athlete.username);
-            document.getElementById("user").innerHTML = "Hello " + athlete.firstname + "!";
         }
     );
+
+    function fetchStuff() {
+      //callStrava();
+      post();
+    };
+
 
 
 </script>
