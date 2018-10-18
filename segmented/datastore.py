@@ -1,5 +1,6 @@
 from flaskext.mysql import MySQL
 
+#TODO: Error Handle this
 mysql = MySQL()
 
 def init(app):
@@ -10,16 +11,11 @@ def get_user(athlete_id):
     # get user from MySQL
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("SELECT * from athlete WHERE strava_id="+str(athlete_id))
+    stmt = "SELECT `strava_id`, concat(firstname, ' ' ,lastname), UNIX_TIMESTAMP(lastLogon), `bearer`, `public` from athlete WHERE strava_id="+str(athlete_id)
+    print("[DATASTORE] Executing " + stmt)
+    cursor.execute(stmt)
 
     data = cursor.fetchall()
-    print(data)
-#    except Exception as e:
-#        print(str(e))
-#   finally:
-#    cursor.close()
-#        conn.close()
-
     return data
 
 def auth_user(athlete):
@@ -39,15 +35,48 @@ def insert_user(athlete):
 
     conn = mysql.connect()
     cursor = conn.cursor()
-    print("--about to insert")
-    cursor.execute("INSERT INTO `athlete` (`strava_id`,`firstname`,`lastname`,`auth`,`lastLogon`,`bearer`,`public`) VALUES ('"+str(id)+"','"+str(firstname)+"','"+str(lastname)+"',NOW(),NOW(),'"+str(bearer)+"',true);")
+    stmt = "INSERT INTO `athlete` (`strava_id`,`firstname`,`lastname`,`auth`,`lastLogon`,`bearer`,`public`) VALUES ('"+str(id)+"','"+str(firstname)+"','"+str(lastname)+"',NOW(),NOW(),'"+str(bearer)+"',true);"
+    print("[DATASTORE] Executing " + stmt)
+    cursor.execute(stmt)
     conn.commit()
-    print("--done to insert")
+
+def update_last_logon(athlete_id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    stmt = "UPDATE `athlete` SET `lastLogon`=NOW() WHERE `strava_id`='"+str(athlete_id)+"'"
+    print("[DATASTORE] Executing " + stmt)
+    cursor.execute(stmt)
+    conn.commit()
 
 def update_user_auth(id, token):
     conn = mysql.connect()
     cursor = conn.cursor()
-    print("--about to update")
-    cursor.execute("UPDATE `athlete` SET `bearer`='"+token+"' WHERE `strava_id`='"+str(id)+"'")
+    stmt = "UPDATE `athlete` SET `bearer`='"+token+"' WHERE `strava_id`='"+str(id)+"'"
+    print("[DATASTORE] Executing " + stmt)
+    cursor.execute(stmt)
     conn.commit()
-    print("--done to update")
+
+def add_athlete_activity_xref(athlete_id,activity_id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    stmt = "INSERT INTO `activityXref` (`strava_id`,`activity_id`) VALUES ('" + str(athlete_id) + "','" + str(activity_id) +"');"
+    print("[DATASTORE] Executing " + stmt)
+    cursor.execute(stmt)
+    conn.commit()
+
+def add_athlete_segment_xref(athlete_id,detailedSegment):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    stmt = "INSERT INTO `segmentXref` (`strava_id`,`segment_id`,`name`,`distance`,`activity_type`,`elevation`,`total_efforts`,`athlete_count`,`user_pr`,`user_efforts`) VALUES ('" + str(athlete_id) + "','" + str(detailedSegment["id"]) +"','" + str(detailedSegment["name"]) +"','" + str(detailedSegment["distance"]) +"','" + str(detailedSegment["activity_type"]) +"','" + str(detailedSegment["total_elevation_gain"]) +"','" + str(detailedSegment["effort_count"]) +"','" + str(detailedSegment["athlete_count"]) +"','" + str(detailedSegment["athlete_segment_stats"]["pr_elapsed_time"]) +"','" + str(detailedSegment["athlete_segment_stats"]["effort_count"]) +"');"
+    print("[DATASTORE] Executing " + stmt)
+    cursor.execute(stmt)
+    conn.commit()
+
+def get_segments(athlete_id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    stmt = "SELECT `segment_id`,`name`,`distance`,`activity_type`,`elevation`,`total_efforts`,`athlete_count`,`user_pr`,`user_efforts` from segmentXref WHERE strava_id="+str(athlete_id)
+    print("[DATASTORE] Executing " + stmt)
+    cursor.execute(stmt)
+    data = cursor.fetchall()
+    return data

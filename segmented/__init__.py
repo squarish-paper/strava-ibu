@@ -29,21 +29,50 @@ def create_app(config, debug=False, testing=False, config_overrides=None):
         state = request.args.get('state')
         athlete = api.oauth(code,state,app)
 
+        #TODO: Error Handle this
         datastore.auth_user(athlete)
-
         return redirect('/dashboard/'+str(athlete['athlete']['id']))
 
     @app.route('/dashboard/<int:athlete_id>')
     def dashboard(athlete_id):
         # get user from MySQL
         data = datastore.get_user(athlete_id)
-        # if no athlete error
+
+        # if user does not exist show error page
         if len(data) is 0:
             return render_template('connect.html')
-        else:
-            #url = "https://www.strava.com/api/v3/athlete/activities"
-            #headers = {'Authorization': 'Bearer 28fb470866dbe165f358b66aa1f5198b9059cd0b'}
-            #r = requests.get(url, headers=headers)
-            return render_template('dashboard.html',activities=json.dumps([]))
+
+        # if user does is not public, show private page
+        if not(data[0][4]):
+            return render_template('private.html')
+
+        bearer = data[0][3]
+        lastLogon = data[0][2]
+        activities = api.get_athlete_activities(bearer,lastLogon,app)
+
+        if len(activities) > 0:
+            get_new_activities(bearer, activities, athlete_id)
+
+        segments = datastore.get_segments(athlete_id)
+        datastore.update_last_logon(athlete_id)
+
+        return render_template('dashboard.html',segments=segments)
+
+    def get_new_activities(bearer, activities, athlete_id):
+        print("--- Fetching new activities")
+        for activity in activities:
+            print("---" + str(activity["name"]))
+            activity_id = activity["id"]
+            athlete_id = activity["athlete"]["id"]
+            datastore.add_athlete_activity_xref(athlete_id,activity_id)
+
+            detailedActivity = api.get_activity(bearer,activity_id,app)
+            segments = detailedActivity["segment_efforts"]
+
+            for segment in segments:
+                segment_id = segment["segment"]["id"]
+                detailedSegment = api.get_segment(bearer,segment_id,app)
+                datastore.add_athlete_segment_xref(athlete_id,detailedSegment)
+
 
     return app

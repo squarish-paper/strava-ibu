@@ -8,12 +8,20 @@
     <h3>CONNECT</h3>
     <p>Use this page to show user stuff</p>
 
-     {% for activity in activities %}
-        <span>{{ activity.id }}</span>
-        <span>{{ activity.name }}</span>
-        <br />
+    <table>
+     {% for segment in segments %}
+     <tr>
+        <td>{{ segment[1] }}</td>
+        <td>{{ segment[2] }}</td>
+        <td>{{ segment[3] }}</td>
+       <td>{{ segment[4] }}</td>
+       <td>{{ segment[5] }}</td>
+       <td>{{ segment[6] }}</td>
+       <td>{{ segment[7] }}</td>
+       <td>{{ segment[8] }}</td>
+      </tr>
      {% endfor %}
-
+   </table>
 
   </body>
 </html>
