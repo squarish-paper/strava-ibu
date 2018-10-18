@@ -1,7 +1,9 @@
-
+OAUTH_URL = 'https://www.strava.com/oauth/token'
 BASE_URL = 'https://www.strava.com/api/v3'
 BEARER_TOKEN = '28fb470866dbe165f358b66aa1f5198b9059cd0b'
+CLIENT_ID="14681"
+CLIENT_SECRET="11a7876f133ab52f30681e1b97e271153b18fa2f"
 MYSQL_DATABASE_USER = 'root'
 MYSQL_DATABASE_PASSWORD = 'root'
-MYSQL_DATABASE_DB = 'BucketList'
+MYSQL_DATABASE_DB = 'segmented'
 MYSQL_DATABASE_HOST = '172.19.0.2'

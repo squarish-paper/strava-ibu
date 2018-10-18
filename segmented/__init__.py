@@ -1,6 +1,6 @@
 import requests
-from . import datastore
-from flask import Flask, render_template, json, request, send_from_directory
+from . import datastore, api
+from flask import Flask, render_template, json, request, send_from_directory,redirect
 
 def create_app(config, debug=False, testing=False, config_overrides=None):
     app = Flask(__name__)
@@ -25,7 +25,13 @@ def create_app(config, debug=False, testing=False, config_overrides=None):
 
     @app.route('/auth')
     def auth():
-        return render_template('auth.html')
+        code = request.args.get('code')
+        state = request.args.get('state')
+        athlete = api.oauth(code,state,app)
+
+        datastore.auth_user(athlete)
+
+        return redirect('/dashboard/'+str(athlete['athlete']['id']))
 
     @app.route('/dashboard/<int:athlete_id>')
     def dashboard(athlete_id):
