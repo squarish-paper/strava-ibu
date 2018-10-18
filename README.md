@@ -1,3 +1,8 @@
-Strava IBU [Interesting, But Useless]
+virtualenv --python python3 env
+source env/bin/activate
 
-Strava data, shown interestingly.
+pip install flask
+pip install flask-mysql
+pip install requests
+
+python app.py

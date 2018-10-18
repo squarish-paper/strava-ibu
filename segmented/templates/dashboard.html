@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Segmented</title>
+  </head>
+
+  <body>
+    <h3>CONNECT</h3>
+    <p>Use this page to show user stuff</p>
+
+     {% for activity in activities %}
+        <span>{{ activity.id }}</span>
+        <span>{{ activity.name }}</span>
+        <br />
+     {% endfor %}
+
+
+  </body>
+</html>
