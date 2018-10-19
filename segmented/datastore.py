@@ -35,7 +35,7 @@ def insert_user(athlete):
 
     conn = mysql.connect()
     cursor = conn.cursor()
-    stmt = "INSERT INTO `athlete` (`strava_id`,`firstname`,`lastname`,`auth`,`lastLogon`,`bearer`,`public`) VALUES ('"+str(id)+"','"+str(firstname)+"','"+str(lastname)+"',NOW(),NOW(),'"+str(bearer)+"',true);"
+    stmt = "INSERT INTO `athlete` (`strava_id`,`firstname`,`lastname`,`auth`,`bearer`,`public`) VALUES ('"+str(id)+"','"+str(firstname)+"','"+str(lastname)+"',NOW(),'"+str(bearer)+"',true);"
     print("[DATASTORE] Executing " + stmt)
     cursor.execute(stmt)
     conn.commit()
