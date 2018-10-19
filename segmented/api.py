@@ -16,7 +16,7 @@ def oauth(code,state, app) :
 
 def get_athlete_activities(bearer, lastLogon, app):
 
-    url = app.config.get("BASE_URL") + "/athlete/activities?after=" + str(lastLogon)
+    url = app.config.get("BASE_URL") + "/athlete/activities?after=" + str(lastLogon) + "&per_page=4"
     print("[API] | Calling " + url)
     headers = {'Authorization': 'Bearer ' + bearer}
     response = requests.get(url, headers=headers)

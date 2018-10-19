@@ -71,8 +71,9 @@ def create_app(config, debug=False, testing=False, config_overrides=None):
 
             for segment in segments:
                 segment_id = segment["segment"]["id"]
-                detailedSegment = api.get_segment(bearer,segment_id,app)
-                datastore.add_athlete_segment_xref(athlete_id,detailedSegment)
-
+                segmentXref = datastore.get_segment_xref(athlete_id,segment_id)
+                if len(segmentXref) is 0:
+                    detailedSegment = api.get_segment(bearer,segment_id,app)
+                    datastore.add_athlete_segment_xref(athlete_id,detailedSegment)
 
     return app
