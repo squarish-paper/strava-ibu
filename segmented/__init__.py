@@ -61,7 +61,6 @@ def create_app(config, debug=False, testing=False, config_overrides=None):
     def get_new_activities(bearer, activities, athlete_id):
         print("--- Fetching new activities")
         for activity in activities:
-            print("---" + str(activity["name"]))
             activity_id = activity["id"]
             athlete_id = activity["athlete"]["id"]
             datastore.add_athlete_activity_xref(athlete_id,activity_id)
@@ -74,6 +73,7 @@ def create_app(config, debug=False, testing=False, config_overrides=None):
                 segmentXref = datastore.get_segment_xref(athlete_id,segment_id)
                 if len(segmentXref) is 0:
                     detailedSegment = api.get_segment(bearer,segment_id,app)
-                    datastore.add_athlete_segment_xref(athlete_id,detailedSegment)
+                    leaderboard = api.get_segment_leaderboard(bearer,segment_id,app)
+                    datastore.add_athlete_segment_xref(athlete_id,detailedSegment,leaderboard)
 
     return app

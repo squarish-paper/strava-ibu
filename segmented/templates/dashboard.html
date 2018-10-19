@@ -9,16 +9,32 @@
     <p>Use this page to show user stuff</p>
 
     <table>
+      <tr>
+        <td>Type</td>
+         <td>Name</td>
+         <td>Distance</td>
+        <td>Elevation</td>
+        <td>My Tries</td>
+        <td>My PB</td>
+        <td>First</td>
+        <td>Tenth</td>
+        <td>Rank</td>
+        <td>Athletes</td>
+        <td>Total Efforts</td>
+       </tr>
      {% for segment in segments %}
      <tr>
+       <td>{{ segment[0] }}</td>
         <td>{{ segment[1] }}</td>
         <td>{{ segment[2] }}</td>
         <td>{{ segment[3] }}</td>
-       <td>{{ segment[4] }}</td>
+        <td>{{ segment[4] }}</td>
        <td>{{ segment[5] }}</td>
        <td>{{ segment[6] }}</td>
        <td>{{ segment[7] }}</td>
        <td>{{ segment[8] }}</td>
+       <td>{{ segment[9] }}</td>
+       <td>{{ segment[10] }}</td>
       </tr>
      {% endfor %}
    </table>
